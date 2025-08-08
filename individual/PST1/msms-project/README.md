@@ -1,3 +1,7 @@
+
+https://github.com/junno-dotcom/FIT1056-Sem2-2025
+
+ 8ccb219 (Update README.md)
 PST 1
 Line 42: I added 'if' conditional statement which is similar to the 'list_students' above. This can ensure that when users input 
 non-existence name, the program will returns a sentence to the user.
@@ -61,4 +65,7 @@ To test it,
 4. List Students / Teachers
 - Choose 4 or 5
 - They will print all current records.
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8ccb219 (Update README.md)
