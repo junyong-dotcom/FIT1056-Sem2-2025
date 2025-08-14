@@ -121,3 +121,141 @@ def print_student_card(student_id):
         print(f"Printed student card to {filename}.")
     else:
         print(f"Error: Could not print card, student {student_id} not found.")
+
+# Fragment 2.4
+def main():
+    """Main function to run the MSMS application."""
+    load_data() # Load all data from file at startup.
+
+    while True:
+        print("\n===== MSMS v2 (Persistent) =====")
+        print("1. Check-in Student")
+        print("2. Add Student")
+        print("3. Add Teacher")
+        print("4. Print Student Card")
+        print("5. Update Teacher Info")
+        print("6. Update Student Info")
+        print("7. Remove Student")
+        print("8. Remove Teacher")
+        print("9. View Attendance Record")
+        print("q. Quit and Save")
+        
+        choice = input("Enter your choice: ")
+        
+        made_change = False # A flag to track if we need to save
+        if choice == '1':
+            """Check-in Student"""
+            student_id = int(input("Enter student ID: "))
+            course_id = int(input("Enter course ID: "))
+            check_in(student_id, course_id)
+            # TODO: Get student_id and course_id from user, then call check_in().
+            made_change = True
+
+        elif choice == '2':
+            """Add new Student"""
+            name = input("Enter Student name: ")
+            enrolled_in = input("Enter course enrolled in: ")
+            student_id = app_data['next_student_id']
+            app_data['students'].append({
+                "id" : student_id,
+                "name": name,
+                "enrolled_in" : [c.strip() for c in enrolled_in]
+            })
+            app_data['next_student_id'] += 1
+            print(f"Student {name} with ID {student_id} is successfully added.")
+            made_change = True
+
+        elif choice == '3':
+            """Add new Teacher"""
+            name = input("Enter teacher's name: ")
+            speciality = input("Enter teacher's speciality: ")
+            add_teacher(name, speciality)
+            made_change = True
+
+        elif choice == '4':
+            """Print Student card"""
+            student_id = int(input("Enter student ID: "))
+            print_student_card(student_id)
+            # TODO: Get student_id, then call print_student_card().
+            pass # No change made, so no save needed
+
+        elif choice == '5':
+            """Update Teacher info"""
+            teacher_id = int(input("Enter teacher ID: "))
+            name = input("Enter new teacher's name: ")
+            teacher_speciality = input("Enter new teacher's speciality: ")
+
+            fields = {}
+            if name:
+                fields['name'] = name
+            if teacher_speciality:
+                fields['speciality'] = teacher_speciality
+            
+            if fields:
+                update_teacher(teacher_id, **fields)    
+                made_change = True
+            else:
+                print("No changes made.")
+
+        elif choice == '6':
+            """Update Student info"""
+            student_id  = int(input("Enter Student ID: "))
+            name = input("Enter Student name: ")
+            enrolled_in = input("Enter New Course to enrolled in: ")
+
+            fields = {}
+            if name:
+                fields['name'] = name
+            if enrolled_in:
+                fields['enrolled_in'] = [c.strip() for c in enrolled_in.split(",")]
+
+            if fields:
+                update_student(student_id, **fields)
+                made_change = True
+            else:
+                print("No changes made.")
+
+        
+        elif choice == '7':
+            """Remove Student"""
+            student_id = int(input("Enter student ID to remove: "))
+            remove_student(student_id)
+            # TODO: Get student_id, then call remove_student().
+            made_change = True
+
+        elif choice == '8':
+            """Remove Teacher"""
+            teacher_id = int(input("Enter teacher ID to remove: "))
+            remove_teacher(teacher_id)
+            made_change = True
+
+        elif choice == '9':
+            print("\n ===Attendance Records===")
+            if app_data['attendance']:
+                check_in(student_id, course_id, timestamp=None)
+            else:
+                print("No Attendance Recorded")
+
+
+        elif choice.lower() == 'q':
+            print("Saving final changes and exiting.")
+            break
+
+        else:
+            print("Invalid choice.")
+            
+        if made_change:
+            save_data() # Save the data immediately after any change.
+
+    save_data() # One final save on exit.
+
+
+# --- Program Start ---
+if __name__ == "__main__":
+    main()
+
+# Course ID:
+# 1. Piano
+# 2. Guitar
+# 3. Advanced Piano
+# 4. Violin
