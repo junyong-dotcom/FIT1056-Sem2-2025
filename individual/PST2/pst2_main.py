@@ -95,6 +95,16 @@ def remove_student(student_id):
 #Fragment 2.3
 def check_in(student_id, course_id, timestamp=None):
     """Records a student's attendance for a course."""
+    # I want to find student name with student ID entered"
+    student = None
+    for s in app_data['students']:
+        if s['id'] == student_id:
+            student = s
+            break
+    if not student:
+        print(f"Error: Student ID {student_id} not found.")
+        return
+    
     if timestamp is None:
         # TODO: Get the current time as a string using datetime.datetime.now().isoformat()
         timestamp = datetime.datetime.now().isoformat()
@@ -103,12 +113,13 @@ def check_in(student_id, course_id, timestamp=None):
     # It should contain 'student_id', 'course_id', and 'timestamp'.
     check_in_record = {
         "student_id": student_id,
+        "student_name" : student['name'],
         "course_id": course_id,
         "timestamp": timestamp
     }
     # TODO: Append this new record to the app_data['attendance'] list.
     app_data['attendance'].append(check_in_record)
-    print(f"Receptionist: Student {student_id} checked into {course_id}.")
+    print(f"Receptionist: Student {'name'} with an ID {student_id} checked into {course_id}.")
 
 def print_student_card(student_id):
     """Creates a text file badge for a student."""
@@ -139,7 +150,7 @@ def print_student_card(student_id):
         print("\n Saved this card to file:")
         print(card_content)
         print(f"Printed student card to {filename}.")
-        
+
     else:
         print(f"Error: Could not print card, student {student_id} not found.")
 
