@@ -21,9 +21,11 @@ def load_data(path=DATA_FILE):
         app_data = {
             "students": [],
             "teachers": [],
+            "courses": {},
             "attendance": [],
             "next_student_id": 1,
-            "next_teacher_id": 1
+            "next_teacher_id": 1,
+            "next_course_id": 1
         }
 
 def save_data(path=DATA_FILE):
@@ -61,6 +63,23 @@ def add_student(name, enrolled_in=""):
     print(f"Student '{name}' (ID: {student_id}) added successfully into course {enrolled_in}.")
     return student_id  
 
+def add_course(course_name):
+    """Adds a new course to the system"""
+    if not course_name.strip():
+        print("Course name cannot be empty.")
+        return None
+    
+    if 'courses' not in app_data:
+        app_data['courses'] = {}
+    if 'next_course_id' not in app_data:
+        app_data['next_course_id'] = 1
+
+    course_id = app_data['next_course_id']
+    app_data['courses'][course_id] = course_name.strip()
+    app_data['next_course_id'] += 1
+    print(f"New course [{course_name} with ID {course_id} has been successfully added.]")
+    return course_id
+
 def update_teacher(teacher_id, **fields):
     """Finds a teacher by ID and updates their data with provided fields."""
     # TODO: Loop through the app_data['teachers'] list.
@@ -95,7 +114,10 @@ def remove_student(student_id):
 #Fragment 2.3
 def check_in(student_id, course_id, timestamp=None):
     """Records a student's attendance for a course."""
-    # I want to find student name with student ID entered"
+    
+    course_name = app_data['courses'].get(course_id)
+
+# I want to find student name with student ID entered"
     student = None
     for s in app_data['students']:
         if s['id'] == student_id:
@@ -103,6 +125,9 @@ def check_in(student_id, course_id, timestamp=None):
             break
     if not student:
         print(f"Error: Student ID {student_id} not found.")
+        return
+    if not course_name:
+        print(f"Error: Course ID {course_id} not found.")
         return
     
     if timestamp is None:
@@ -115,11 +140,12 @@ def check_in(student_id, course_id, timestamp=None):
         "student_id": student_id,
         "student_name" : student['name'],
         "course_id": course_id,
+        "course_name":  course_name,
         "timestamp": timestamp
     }
     # TODO: Append this new record to the app_data['attendance'] list.
     app_data['attendance'].append(check_in_record)
-    print(f"Receptionist: Student {'name'} with an ID {student_id} checked into {course_id}.")
+    print(f"Receptionist: Student {student['name']} with an ID {student_id} checked into {course_name} (ID: {course_id}).")
 
 def print_student_card(student_id):
     """Creates a text file badge for a student."""
@@ -170,6 +196,7 @@ def main():
         print("7. Remove Student")
         print("8. Remove Teacher")
         print("9. View Attendance Record")
+        print("10. Add course(Accessible to staff only)")
         print("q. Quit and Save")
         
         choice = input("Enter your choice: ")
@@ -255,12 +282,23 @@ def main():
             made_change = True
 
         elif choice == '9':
+            """Attendance Record"""
             print("\n ===Attendance Records===")
             if app_data['attendance']:
-                check_in(student_id, course_id, timestamp=None)
+                for record in app_data['attendance']:
+                    print(
+                f"{record['timestamp']}: "
+                f"{record.get('student_name')} (ID: {record['student_id']}) "
+                f"attended {record.get('course_name')}"
+            )
             else:
                 print("No Attendance Recorded")
 
+        elif choice == '10':
+            """Add new course to this music school"""
+            course_name = input("Enter course name: ").strip()
+            if add_course(course_name) is not None:
+                made_change = True
 
         elif choice.lower() == 'q':
             print("Saving final changes and exiting.")
