@@ -48,6 +48,19 @@ def add_teacher(name, speciality):
     app_data['next_teacher_id'] += 1
     print(f"Core: Teacher '{name}' added.")
 
+def add_student(name, enrolled_in=""):
+    """Adds a student dictionary to the data store."""
+    student_id = app_data['next_student_id']
+    new_student = {
+        "id": student_id,
+        "name": name,
+        "enrolled_in": [c.strip() for c in enrolled_in.split(",")] if enrolled_in else []
+    }
+    app_data['students'].append(new_student)
+    app_data['next_student_id'] += 1
+    print(f"Student '{name}' (ID: {student_id}) added successfully into course {enrolled_in}.")
+    return student_id  
+
 def update_teacher(teacher_id, **fields):
     """Finds a teacher by ID and updates their data with provided fields."""
     # TODO: Loop through the app_data['teachers'] list.
@@ -155,14 +168,7 @@ def main():
             """Add new Student"""
             name = input("Enter Student name: ")
             enrolled_in = input("Enter course enrolled in: ")
-            student_id = app_data['next_student_id']
-            app_data['students'].append({
-                "id" : student_id,
-                "name": name,
-                "enrolled_in" : [c.strip() for c in enrolled_in]
-            })
-            app_data['next_student_id'] += 1
-            print(f"Student {name} with ID {student_id} is successfully added.")
+            add_student(name, enrolled_in)
             made_change = True
 
         elif choice == '3':
