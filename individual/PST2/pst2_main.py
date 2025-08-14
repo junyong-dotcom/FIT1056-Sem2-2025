@@ -123,15 +123,23 @@ def print_student_card(student_id):
         # TODO: Create a filename, e.g., f"{student_id}_card.txt".
         filename = f"{student_id}_card.txt"
         # TODO: Open the file in write mode ('w').
+        card_content = (
+            "========================\n"
+            f"  MUSIC SCHOOL ID BADGE\n"
+            "========================\n"
+            f"ID: {student_to_print['id']}\n"
+            f"Name: {student_to_print['name']}\n"
+            f"Enrolled In: {', '.join(student_to_print.get('enrolled_in', []))}\n"
+        )
+
         with open(filename, 'w') as f:
             # Write the student's details to the file in a nice format.
-            f.write("========================\n")
-            f.write(f"  MUSIC SCHOOL ID BADGE\n")
-            f.write("========================\n")
-            f.write(f"ID: {student_to_print['id']}\n")
-            f.write(f"Name: {student_to_print['name']}\n")
-            f.write(f"Enrolled In: {', '.join(student_to_print.get('enrolled_in', []))}\n")
+            f.write(card_content)
+
+        print("\n Saved this card to file:")
+        print(card_content)
         print(f"Printed student card to {filename}.")
+        
     else:
         print(f"Error: Could not print card, student {student_id} not found.")
 
