@@ -1,0 +1,41 @@
+{
+    "students": [
+        {
+            "id": 1,
+            "name": "TamJY",
+            "enrolled_in": [
+                "Piano"
+            ]
+        }
+    ],
+    "teachers": [
+        {
+            "id": 1,
+            "name": "Teo CJ",
+            "speciality": "Guitar"
+        }
+    ],
+    "courses": {
+        "1": "Piano",
+        "2": "Piano"
+    },
+    "attendance": [
+        {
+            "student_id": 1,
+            "student_name": "TamJY",
+            "course_id": 1,
+            "course_name": "Piano",
+            "timestamp": "2025-08-20T15:18:28.447899"
+        },
+        {
+            "student_id": 1,
+            "student_name": "TamJY",
+            "course_id": 1,
+            "course_name": "Piano",
+            "timestamp": "2025-08-20T15:22:42.802903"
+        }
+    ],
+    "next_student_id": 2,
+    "next_teacher_id": 2,
+    "next_course_id": 3
+}

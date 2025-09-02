@@ -36,9 +36,9 @@ def save_data(path=DATA_FILE):
     with open(path, 'w') as f:
         json.dump(app_data, f, indent=4)
     print("Data saved successfully.")
-
+                 
 #Fragment 2.2
-def add_teacher(name, speciality):
+def add_teacher(name, speciality):  
     """Adds a teacher dictionary to the data store."""
     # TODO: Get the next teacher ID from app_data['next_teacher_id'].
     teacher_id = app_data['next_teacher_id']
@@ -88,7 +88,7 @@ def update_teacher(teacher_id, **fields):
         if teacher['id'] == teacher_id:
             # Use the .update() method on the teacher dictionary to apply the 'fields'.
             teacher.update(fields)
-            print(f"Teacher {teacher_id} updated.")
+            print(f"Teacher {teacher_id} updated.") 
             return
     print(f"Error: Teacher with ID {teacher_id} not found.")
 
@@ -322,3 +322,8 @@ if __name__ == "__main__":
 # 2. Guitar
 # 3. Advanced Piano
 # 4. Violin
+
+#json list dict
+#why dump
+#iso TimeoutError
+#validation constring (duplication)
