@@ -1,0 +1,120 @@
+{
+    "students": [
+        {
+            "id": 3,
+            "name": "Tam",
+            "enrolled_in": [
+                "Piano"
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Tam",
+            "enrolled_in": [
+                "Piano"
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Tam",
+            "enrolled_in": [
+                "Piano"
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Amy",
+            "enrolled_in": [
+                "Guitar"
+            ]
+        },
+        {
+            "id": 7,
+            "name": "Ali",
+            "enrolled_in": [
+                "Advanced Piano"
+            ]
+        }
+    ],
+    "teachers": [
+        {
+            "id": 1,
+            "name": "Teo",
+            "speciality": "Guitar"
+        },
+        {
+            "id": 2,
+            "name": "Lim",
+            "speciality": "Advanced Piano"
+        },
+        {
+            "id": 3,
+            "name": "Chong",
+            "speciality": "Piano"
+        },
+        {
+            "id": 4,
+            "name": "Hanzudo",
+            "speciality": "Piano"
+        }
+    ],
+    "attendance": [
+        {
+            "student_id": 1,
+            "course_id": 1,
+            "timestamp": "2025-08-14T11:43:35.582154"
+        },
+        {
+            "student_id": 1,
+            "course_id": 1,
+            "timestamp": "2025-08-14T12:14:47.277301"
+        },
+        {
+            "student_id": 1,
+            "course_id": 1,
+            "timestamp": "2025-08-14T12:15:02.249228"
+        },
+        {
+            "student_id": 3,
+            "course_id": 1,
+            "timestamp": "2025-08-14T13:06:23.050445"
+        },
+        {
+            "student_id": 4,
+            "student_name": "Tam",
+            "course_id": 1,
+            "course_name": "Piano",
+            "timestamp": "2025-08-14T14:17:49.045982"
+        },
+        {
+            "student_id": 6,
+            "student_name": "Amy",
+            "course_id": 3,
+            "course_name": "Guitar",
+            "timestamp": "2025-08-14T14:40:49.186414"
+        },
+        {
+            "student_id": 6,
+            "student_name": "Amy",
+            "course_id": 2,
+            "course_name": "Piano",
+            "timestamp": "2025-08-14T14:41:41.375237"
+        },
+        {
+            "student_id": 7,
+            "student_name": "Ali",
+            "course_id": 4,
+            "course_name": "Advanced Piano",
+            "timestamp": "2025-08-14T14:44:23.879000"
+        }
+    ],
+    "next_student_id": 8,
+    "next_teacher_id": 5,
+    "courses": {
+        "1": "Piano",
+        "2": "Piano",
+        "3": "Guitar",
+        "4": "Advanced Piano"
+    },
+    "next_course_id": 5
+}
