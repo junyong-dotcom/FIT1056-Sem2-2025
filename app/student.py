@@ -8,4 +8,5 @@ class StudentUser(User):
         # TODO: Initialize an empty list called 'enrolled_course_ids' to store the IDs of courses.
         self.enrolled_course_ids = []
 
+
         
