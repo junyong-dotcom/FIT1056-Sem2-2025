@@ -1,4 +1,5 @@
 import json
+import datetime
 from app.student import StudentUser
 from app.teacher import TeacherUser, Course
 
@@ -38,6 +39,9 @@ class ScheduleManager:
                 # Use .get() with a default empty list to prevent errors if the key doesn't exist.
         
                 self.attendance_log = data.get("attendance", [])
+                self.next_student_id = data.get("next_student_id", 1)
+                self.next_teacher_id = data.get("next_teacher_id", 1)
+                self.next_course_id = data.get("next_course_id", 1)
 
         except FileNotFoundError:         
             print("Data file not found. Starting with a clean state.")
@@ -59,3 +63,37 @@ class ScheduleManager:
         # TODO: Write 'data_to_save' to the JSON file.
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
+                       
+    def check_in(self, student_id, course_id):
+        """Records a student's attendance for a course after validation."""
+    # This implementation remains the same, but it will now function correctly.
+        student = self.find_student_by_id(student_id)
+        course = self.find_course_by_id(course_id)
+    
+        if not student or not course:
+            print("Error: Check-in failed. Invalid Student or Course ID.")
+            return False
+        
+        timestamp = datetime.datetime.now().isoformat()
+        check_in_record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
+    
+    # This line will now work without causing an AttributeError.
+        self.attendance_log.append(check_in_record)
+        self._save_data() # This will now correctly save the attendance log.
+        print(f"Success: Student {student.name} checked into {course.name}.")
+        return True
+
+# TODO: Also implement find_student_by_id and find_course_by_id helper methods.
+    def find_student_by_id(self, student_id):
+        """Find and return a student object by ID, or None if not found."""
+        for student in self.students:
+            if student.id == student_id:
+                return student
+        return None
+
+    def find_course_by_id(self, course_id):
+        """Find and return a course object by ID, or None if not found."""
+        for course in self.courses:
+            if course.id == course_id:
+                return course
+        return None
