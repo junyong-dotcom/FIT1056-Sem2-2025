@@ -78,10 +78,10 @@ class ScheduleManager:
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
                        
-    def check_in(self, user_id, course_id):
+    def check_in(self, student_id, course_id):
         """Records a student's attendance for a course after validation."""
     # This implementation remains the same, but it will now function correctly.
-        student = self.find_student_by_id(user_id)
+        student = self.find_student_by_id(student_id)
         course = self.find_course_by_id(course_id)
     
         if not student or not course:
@@ -89,7 +89,7 @@ class ScheduleManager:
             return False
         
         timestamp = datetime.datetime.now().isoformat()
-        check_in_record = {"user_id": user_id, "course_id": course_id, "timestamp": timestamp}
+        check_in_record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
     
     # This line will now work without causing an AttributeError.
         self.attendance_log.append(check_in_record)
@@ -98,10 +98,10 @@ class ScheduleManager:
         return True
 
 # TODO: Also implement find_student_by_id and find_course_by_id helper methods.
-    def find_student_by_id(self, user_id):
+    def find_student_by_id(self, student_id):
         """Find and return a student object by ID, or None if not found."""
         for student in self.students:
-            if student.id == user_id:
+            if student.id == student_id:
                 return student
         return None
 
@@ -136,9 +136,9 @@ class ScheduleManager:
                 return teacher
         return None
 
-    def switch_student_course(self, user_id, from_course_id, to_course_id):
+    def switch_student_course(self, student_id, from_course_id, to_course_id):
         """Switch a student from one course to another."""
-        student = self.find_student_by_id(user_id)
+        student = self.find_student_by_id(student_id)
         from_course = self.find_course_by_id(from_course_id)
         to_course = self.find_course_by_id(to_course_id)
 
@@ -150,17 +150,65 @@ class ScheduleManager:
 
         if from_course_id in student.enrolled_course_ids:
             student.enrolled_course_ids.remove(from_course_id)
-            if user_id in from_course.enrolled_student_ids:
-                from_course.enrolled_student_ids.remove(user_id)
+            if student_id in from_course.enrolled_student_ids:
+                from_course.enrolled_student_ids.remove(student_id)
         else:
             return False
 
         if to_course_id not in student.enrolled_course_ids:
             student.enrolled_course_ids.append(to_course_id)
-            if user_id not in to_course.enrolled_student_ids:
-                to_course.enrolled_student_ids.append(user_id)
+            if student_id not in to_course.enrolled_student_ids:
+                to_course.enrolled_student_ids.append(student_id)
 
         self._save_data()
         return True
 
-        
+    def add_student(self, name):
+        student = StudentUser(user_id=self.next_student_id, name=name)
+        self.students.append(student)
+        self.next_student_id += 1
+        self._save_data()
+        return student
+
+    def add_teacher(self, name, speciality):
+        teacher = TeacherUser(student_id=self.next_teacher_id, name=name, speciality=speciality)
+        self.teachers.append(teacher)
+        self.next_teacher_id += 1
+        self._save_data()
+        return teacher
+
+    def add_course(self, name, instrument, teacher_id):
+        course = Course(course_id=self.next_course_id, name=name, instrument=instrument, teacher_id=teacher_id)
+        self.courses.append(course)
+        self.next_course_id += 1
+        self._save_data()
+        return course
+
+    def schedule_lesson(self, course_id, day, start_time, room="N/A"):
+        course = self.find_course_by_id(course_id)
+        if not course:
+            return False
+        lesson_id = len(course.lessons) + 1
+        course.lessons.append({"lesson_id": lesson_id, "day": day, "start_time": start_time, "room": room})
+        self._save_data()
+        return True
+
+    def get_student_courses(self, student_id):
+        student = self.find_student_by_id(student_id)
+        if not student:
+            return []
+        return [self.find_course_by_id(cid) for cid in student.enrolled_course_ids]
+
+    def get_teacher_courses(self, teacher_id):
+        return [course for course in self.courses if course.teacher_id == teacher_id]
+
+    def attendance_report(self, course_id=None, student_id=None):
+        report = []
+        for record in self.attendance_log:
+            if course_id and record["course_id"] != course_id:
+                continue
+            if student_id and record["student_id"] != student_id:
+                continue
+            report.append(record)
+        return report
+
