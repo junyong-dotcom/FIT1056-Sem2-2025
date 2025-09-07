@@ -27,14 +27,28 @@ class ScheduleManager:
                 print("Data loaded successfully.")
                 # TODO: Load students, teachers, and courses as before.
                 #Load students
-                self.students = [StudentUser(**s) for s in data.get("students", [])]
+                self.students = [
 
-                # Load teachers
-                self.teachers = [TeacherUser(**t) for t in data.get("teachers", [])]
+                    StudentUser(user_id=s["id"], name=s["name"], enrolled_course_ids=s.get("enrolled_course_ids", []))
+                    for s in data.get("students", [])
+                ]
 
-                # Load courses
-                self.courses = [Course(**c) for c in data.get("courses", [])]
+                self.teachers = [
+                    TeacherUser(user_id=t["id"], name=t["name"], speciality=t["speciality"])
+                    for t in data.get("teachers", [])
+                ]
 
+                self.courses = []
+                for c in data.get("courses", []):
+                    course = Course(
+                        course_id=c["id"],
+                        name=c["name"],
+                        instrument=c["instrument"],
+                        teacher_id=c["teacher_id"]
+                    )
+                    course.enrolled_student_ids = c.get("enrolled_student_ids", [])
+                    course.lessons = c.get("lessons", [])
+                    self.courses.append(course)
                 # TODO: Correctly load the attendance log.
                 # Use .get() with a default empty list to prevent errors if the key doesn't exist.
         
@@ -64,10 +78,10 @@ class ScheduleManager:
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
                        
-    def check_in(self, student_id, course_id):
+    def check_in(self, user_id, course_id):
         """Records a student's attendance for a course after validation."""
     # This implementation remains the same, but it will now function correctly.
-        student = self.find_student_by_id(student_id)
+        student = self.find_student_by_id(user_id)
         course = self.find_course_by_id(course_id)
     
         if not student or not course:
@@ -75,7 +89,7 @@ class ScheduleManager:
             return False
         
         timestamp = datetime.datetime.now().isoformat()
-        check_in_record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
+        check_in_record = {"user_id": user_id, "course_id": course_id, "timestamp": timestamp}
     
     # This line will now work without causing an AttributeError.
         self.attendance_log.append(check_in_record)
@@ -84,10 +98,10 @@ class ScheduleManager:
         return True
 
 # TODO: Also implement find_student_by_id and find_course_by_id helper methods.
-    def find_student_by_id(self, student_id):
+    def find_student_by_id(self, user_id):
         """Find and return a student object by ID, or None if not found."""
         for student in self.students:
-            if student.id == student_id:
+            if student.id == user_id:
                 return student
         return None
 
@@ -98,4 +112,55 @@ class ScheduleManager:
                 return course
         return None
     
-#
+    def get_lessons_by_day(self, day):
+        """Return all lessons scheduled on a given day, with course + teacher info."""
+        lessons_for_day = []
+        for course in self.courses:
+            for lesson in course.lessons:
+                if lesson["day"].lower() == day.lower():
+                    lessons_for_day.append({
+                        "course_id": course.id,
+                        "course_name": course.name,
+                        "teacher_id": course.teacher_id,
+                        "day": lesson["day"],
+                        "time": lesson["start_time"],
+                        "room": lesson.get("room", "N/A")
+                    })
+        return lessons_for_day
+
+
+    def find_teacher_by_id(self, teacher_id):
+        """Find and return a teacher object by ID, or None if not found."""
+        for teacher in self.teachers:
+            if teacher.id == teacher_id:
+                return teacher
+        return None
+
+    def switch_student_course(self, user_id, from_course_id, to_course_id):
+        """Switch a student from one course to another."""
+        student = self.find_student_by_id(user_id)
+        from_course = self.find_course_by_id(from_course_id)
+        to_course = self.find_course_by_id(to_course_id)
+
+        if not student:
+            return False
+
+        if not from_course_id or not to_course:
+            return False  # invalid IDs
+
+        if from_course_id in student.enrolled_course_ids:
+            student.enrolled_course_ids.remove(from_course_id)
+            if user_id in from_course.enrolled_student_ids:
+                from_course.enrolled_student_ids.remove(user_id)
+        else:
+            return False
+
+        if to_course_id not in student.enrolled_course_ids:
+            student.enrolled_course_ids.append(to_course_id)
+            if user_id not in to_course.enrolled_student_ids:
+                to_course.enrolled_student_ids.append(user_id)
+
+        self._save_data()
+        return True
+
+        
