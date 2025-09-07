@@ -171,7 +171,7 @@ class ScheduleManager:
         return student
 
     def add_teacher(self, name, speciality):
-        teacher = TeacherUser(student_id=self.next_teacher_id, name=name, speciality=speciality)
+        teacher = TeacherUser(user_id=self.next_teacher_id, name=name, speciality=speciality)
         self.teachers.append(teacher)
         self.next_teacher_id += 1
         self._save_data()
@@ -183,6 +183,62 @@ class ScheduleManager:
         self.next_course_id += 1
         self._save_data()
         return course
+    
+    def update_student(self, student_id, new_name=None, new_enrolled_courses=None):
+        """Update student's name and/or enrolled courses."""
+        student = self.find_student_by_id(student_id)
+        if not student:
+            return False
+        if new_name:
+            student.name = new_name
+        if new_enrolled_courses is not None:
+            for course in self.courses:
+                if student_id in course.enrolled_student_ids and course.id not in new_enrolled_courses:
+                    course.enrolled_student_ids.remove(student_id)
+            for cid in new_enrolled_courses:
+                course = self.find_course_by_id(cid)
+                if course and student_id not in course.enrolled_student_ids:
+                    course.enrolled_student_ids.append(student_id)
+            student.enrolled_course_ids = new_enrolled_courses
+        self._save_data()
+        return True
+
+    def remove_student(self, student_id):
+        """Remove a student and update all enrolled courses."""
+        student = self.find_student_by_id(student_id)
+        if not student:
+            return False
+        for course in self.courses:
+            if student_id in course.enrolled_student_ids:
+                course.enrolled_student_ids.remove(student_id)
+        self.students = [s for s in self.students if s.id != student_id]
+        self._save_data()
+        return True
+    
+    def update_teacher(self, teacher_id, new_name=None, new_speciality=None):
+            """Update teacher's name and/or speciality."""
+            teacher = self.find_teacher_by_id(teacher_id)
+            if not teacher:
+                return False
+            if new_name:
+                teacher.name = new_name
+            if new_speciality:
+                teacher.speciality = new_speciality
+            self._save_data()
+            return True
+
+    def remove_teacher(self, teacher_id):
+        """Remove a teacher and update all associated courses."""
+        teacher = self.find_teacher_by_id(teacher_id)
+        if not teacher:
+            return False
+        for course in self.courses:
+            if course.teacher_id == teacher_id:
+                course.teacher_id = None  
+        self.teachers = [t for t in self.teachers if t.id != teacher_id]
+        self._save_data()
+        return True
+
 
     def schedule_lesson(self, course_id, day, start_time, room="N/A"):
         course = self.find_course_by_id(course_id)
@@ -212,3 +268,19 @@ class ScheduleManager:
             report.append(record)
         return report
 
+#extra functionality
+    def get_lessons_by_room(self, room):
+        """Return all lessons scheduled in a specific room."""
+        lessons_in_room = []
+        for course in self.courses:
+            for lesson in course.lessons:
+                if lesson.get("room", "").lower() == room.lower():
+                    lessons_in_room.append({
+                        "course_id": course.id,
+                        "course_name": course.name,
+                        "teacher_id": course.teacher_id,
+                        "day": lesson["day"],
+                        "time": lesson["start_time"],
+                        "room": lesson.get("room", "N/A")
+                    })
+        return lessons_in_room
