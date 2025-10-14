@@ -1,6 +1,7 @@
 import json
 import csv
 import datetime
+import logging
 from app.student import StudentUser
 # Corrected Import: TeacherUser and Course now come from the same file.
 from app.teacher import TeacherUser, Course
@@ -82,6 +83,7 @@ class ScheduleManager:
         student_exists = any(s.id == student_id for s in self.students)
         if not student_exists:
             print(f"Error: No student found with ID {student_id}")
+            logging.error(f"Failed payment: student ID {student_id} not found.")
             return
 
         payment_record = {
@@ -93,7 +95,29 @@ class ScheduleManager:
 
         self.finance_log.append(payment_record)
         self._save_data()
-        print(f"💰 Payment of RM{amount} for student {student_id} recorded via {method}.")
+        print(f"Payment of RM{amount} for student {student_id} recorded via {method}.")
+        logging.info(f"Payment recorded: RM{amount} by student {student_id} via {method}.")
+
+    def cancel_lesson(self, lesson_id, reason):
+        """Cancels a lesson and logs the event."""
+        found = False
+        for course in self.courses:
+            for lesson in course.lessons:
+                if lesson["lesson_id"] == lesson_id:
+                    course.lessons.remove(lesson)
+                    found = True
+                    break
+            if found:
+                break
+
+        self._save_data()
+
+        if found:
+            print(f"Lesson {lesson_id} cancelled: {reason}")
+            logging.warning(f"Lesson {lesson_id} cancelled. Reason: {reason}")
+        else:
+            print(f"Lesson {lesson_id} not found.")
+            logging.error(f"Failed to cancel: lesson {lesson_id} not found.")
 
     def get_payment_history(self, student_id):
         """Returns a list of all payments for a given student."""
