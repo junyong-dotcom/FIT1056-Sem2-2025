@@ -1,0 +1,131 @@
+{
+    "students": [
+        {
+            "id": 1,
+            "name": "Alice Johnson",
+            "enrolled_course_ids": [
+                101,
+                103,
+                105
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Bob Williams",
+            "enrolled_course_ids": [
+                102,
+                104,
+                106,
+                107
+            ]
+        }
+    ],
+    "teachers": [
+        {
+            "id": 1,
+            "name": "Mr. David Fret",
+            "speciality": "Guitar"
+        },
+        {
+            "id": 2,
+            "name": "Tenxi",
+            "speciality": "Piano"
+        },
+        {
+            "id": 3,
+            "name": "Nana",
+            "speciality": "Violin"
+        },
+        {
+            "id": 4,
+            "name": "Nini",
+            "speciality": "Violin"
+        }
+    ],
+    "courses": [
+        {
+            "id": 105,
+            "name": "Intermediate Piano",
+            "instrument": "Piano",
+            "teacher_id": 2,
+            "enrolled_student_ids": [
+                1
+            ],
+            "lessons": [
+                {
+                    "lesson_id": 1,
+                    "course_name": "Intermediate Piano",
+                    "day": "Monday",
+                    "start_time": "08:00",
+                    "room": "9401"
+                }
+            ]
+        },
+        {
+            "id": 106,
+            "name": "Guitar for Beginner",
+            "instrument": "Guitar",
+            "teacher_id": 1,
+            "enrolled_student_ids": [
+                2
+            ],
+            "lessons": [
+                {
+                    "lesson_id": 2,
+                    "course_name": "Guitar for Beginner",
+                    "day": "Tuesday",
+                    "start_time": "10:00",
+                    "room": "8302"
+                }
+            ]
+        },
+        {
+            "id": 107,
+            "name": "Violin Performance Workshop",
+            "instrument": "Violin",
+            "teacher_id": 3,
+            "enrolled_student_ids": [
+                2
+            ],
+            "lessons": [
+                {
+                    "lesson_id": 3,
+                    "course_name": "Violin Performance Workshop",
+                    "day": "Wednesday",
+                    "start_time": "13:00",
+                    "room": "3344"
+                }
+            ]
+        }
+    ],
+    "attendance": [
+        {
+            "id": 1,
+            "lesson_id": 1,
+            "status": "Present",
+            "student_id": 1,
+            "course_id": null,
+            "timestamp": null
+        },
+        {
+            "id": 2,
+            "lesson_id": 2,
+            "status": "Present",
+            "student_id": 2
+        }
+    ],
+    "finance_log": [
+        {
+            "student_id": 1,
+            "amount": 0.01,
+            "method": "Junno",
+            "timestamp": "2025-10-14T19:08:48.112304"
+        },
+        {
+            "student_id": 2,
+            "amount": 2000.0,
+            "method": "Cash",
+            "timestamp": "2025-10-15T23:16:55.396382"
+        }
+    ]
+}
